@@ -20,7 +20,7 @@ jobs:
         distribution: 'temurin'
 
     - name: Build WAR (Maven)
-      run: mvn -B package --file pom.xml
+      run: mvn -B package --file simple-war-app/pom.xml
 
     - name: Copy WAR to EC2
       uses: appleboy/scp-action@v0.1.4
@@ -28,7 +28,7 @@ jobs:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
-        source: "target/*.war"
+        source: "simple-war-app/target/*.war"
         target: "/opt/tomcat/instance/app1/webapps/"
 
     - name: Restart Tomcat
