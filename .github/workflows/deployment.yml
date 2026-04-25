@@ -1,0 +1,35 @@
+name: Deploy WAR to Tomcat via SSH
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Build WAR (Maven)
+      run: mvn -B package --file pom.xml
+
+    - name: Copy WAR to EC2
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        source: "target/*.war"
+        target: "/opt/tomcat/instance/app1/webapps/"
+
+    - name: Restart Tomcat
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          sudo systemctl restart tomcat-app1
+          sudo systemctl status tomcat-app1 --no-pager
