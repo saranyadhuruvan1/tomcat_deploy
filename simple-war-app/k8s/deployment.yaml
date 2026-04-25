@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-war-app
+  labels:
+    app: simple-war-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: simple-war-app
+  template:
+    metadata:
+      labels:
+        app: simple-war-app
+    spec:
+      containers:
+      - name: simple-war-app
+        image: 160180440306.dkr.ecr.us-east-1.amazonaws.com/simple-war-app:2
+        ports:
+        - containerPort: 8080
